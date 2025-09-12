@@ -3,7 +3,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 
-SRC    = src/main.c src/file.c src/functions/add.c
+SRC    = src/main.c src/file.c src/functions.c
 OBJ    = $(patsubst src/%.c, build/%.o, $(SRC))
 TARGET = a.out
 
