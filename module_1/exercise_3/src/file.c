@@ -2,28 +2,41 @@
 
 #include "../include/file.h"
 
-void write_to_registry(struct vehicle v, struct person o)
+int is_registry_available()
+{
+    FILE *file = fopen("./data/registry.csv", "r");
+    if (!file) {
+        fancy_print("There was an error while opening the registry.", RED);
+        return 0;
+    }
+    fclose(file);
+    return 1;
+}
+
+int write_to_registry(struct vehicle v, struct person o)
 {
     FILE *file = fopen("./data/registry.csv", "a");
-
-    if (file == NULL)
-        printf("There was an error while writing to registry.\n");
-    else {
-        fprintf(file, "%s,%s,%s,%s,%d\n", v.type, v.brand, v.license_plate, o.name, o.age);
-        fclose(file);
+    if (!file) {
+        fancy_print("There was an error while opening the registry.", RED);
+        return 0;
     }
+
+    fprintf(file, "%s,%s,%s,%s,%d\n", v.type, v.brand, v.license_plate, o.name, o.age);
+    fclose(file);
+    return 1;
 }
 
 int count_lines()
 {
     FILE *file = fopen("./data/registry.csv", "r");
     if (!file) {
-        printf("There was an error while opening the registry.\n");
+        fancy_print("There was an error while opening the registry.", RED);
         return -1;
     }
 
     int count = 0;
     int current_char;
+
     while ((current_char = fgetc(file)) != EOF) {
         if (current_char == '\n')
             count++;
@@ -33,16 +46,21 @@ int count_lines()
     return count;
 }
 
+// void delete_line(int index)
+// {
+
+// }
+
 /*
 start - on which line to start printing (indexed from 0)
 print_count - how many lines to print
 */
-void read_csv(int start, int print_count)
+int read_csv(int start, int print_count)
 {
     FILE *file = fopen("./data/registry.csv", "r");
     if (!file) {
-        printf("There was an error while opening the registry.\n");
-        return;
+        fancy_print("There was an error while opening the registry.", RED);
+        return 0;
     }
 
     int line_num = 0;
@@ -72,6 +90,7 @@ void read_csv(int start, int print_count)
         line_num++;
     }
     fclose(file);
+    return 1;
 }
 
 char *read_string()
