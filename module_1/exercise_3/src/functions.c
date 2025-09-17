@@ -176,6 +176,11 @@ int search_for_owner()
     
     printf("\nEnter owner name: ");
     query = read_string();
+
+    if (!validate(query, OWNER_NAME)) {
+        fancy_print("Invalid owner name. Use only alphabet letters and spaces..", RED);
+        return 0;
+    }
     
     sort_registry();
     struct vehicle *vehicles = get_vehicles();
