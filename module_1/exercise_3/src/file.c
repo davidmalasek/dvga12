@@ -13,7 +13,7 @@ int is_registry_available()
     return 1;
 }
 
-int write_to_registry(struct vehicle v, struct person o)
+int write_to_registry(struct vehicle v)
 {
     FILE *file = fopen("./data/registry.csv", "a");
     if (!file) {
@@ -21,7 +21,7 @@ int write_to_registry(struct vehicle v, struct person o)
         return 0;
     }
 
-    fprintf(file, "%s,%s,%s,%s,%d\n", v.type, v.brand, v.license_plate, o.name, o.age);
+    fprintf(file, "%s,%s,%s,%s,%d\n", v.type, v.brand, v.license_plate, v.owner.name, v.owner.age);
     fclose(file);
     return 1;
 }
@@ -46,16 +46,26 @@ int count_lines()
     return count;
 }
 
-// void delete_line(int index)
-// {
+/**
+ * Returns a vehicle struct from a line from csv file.
+ */
+struct vehicle get_data_from_line(char *line)
+{
+    struct vehicle vehicle;
 
-// }
+    // Remove newline
+    line[strcspn(line, "\n")] = '\0';
 
-/*
-start - on which line to start printing (indexed from 0)
-print_count - how many lines to print
-*/
-int read_csv(int start, int print_count)
+    vehicle.type = strtok(line, ",");
+    vehicle.brand = strtok(NULL, ",");
+    vehicle.license_plate = strtok(NULL, ",");
+    vehicle.owner.name = strtok(NULL, ",");
+    vehicle.owner.age = atoi(strtok(NULL, ","));
+
+    return (vehicle);
+}
+
+char *get_line(int line_index)
 {
     FILE *file = fopen("./data/registry.csv", "r");
     if (!file) {
@@ -63,33 +73,85 @@ int read_csv(int start, int print_count)
         return 0;
     }
 
-    int line_num = 0;
+    int current_line = 0;
+    char line[155];
+
+    while (fgets(line, sizeof(line), file)) {
+
+        if (current_line == line_index)
+            return line;
+        current_line++;
+    }
+    fclose(file);
+}
+
+/*
+start - on which line to start printing (indexed from 0)
+print_count - how many lines to print
+*/
+int print_registry(int start, int print_count)
+{
+    FILE *file = fopen("./data/registry.csv", "r");
+    if (!file) {
+        fancy_print("There was an error while opening the registry.", RED);
+        return 0;
+    }
+
+    int current_line = 0;
     int printed_lines = 0;
     char line[155];
 
     struct vehicle v;
-    struct person p;
 
     printf("\n%-12s %-12s %-12s %-12s %-20s %s\n", "Index", "Type", "Brand", "Plate", "Name", "Age");
     printf("----------------------------------------------------------------------------\n");
+
     while (fgets(line, sizeof(line), file)) {
 
-        if (line_num >= start && printed_lines < print_count) {
-            // Remove newline
-            line[strcspn(line, "\n")] = '\0';
+        if (current_line >= start && printed_lines < print_count) {
+            v = get_data_from_line(line);
 
-            v.type = strtok(line, ",");
-            v.brand  = strtok(NULL, ",");
-            v.license_plate   = strtok(NULL, ",");
-            p.name  = strtok(NULL, ",");
-            p.age = atoi(strtok(NULL, ","));
-
-            printf("%-12d %-12s %-12s %-12s %-20s %3d\n", line_num + 1, v.type, v.brand, v.license_plate, p.name, p.age);
+            printf("%-12d %-12s %-12s %-12s %-20s %3d\n", current_line + 1, v.type, v.brand, v.license_plate, v.owner.name, v.owner.age);
             printed_lines++;
         }
-        line_num++;
+        current_line++;
     }
     fclose(file);
+    return 1;
+}
+
+int delete_line(int line_index)
+{
+    FILE *in = fopen("./data/registry.csv", "r");
+    FILE *out = fopen("./data/temp.csv", "w");
+
+    if (!in) {
+        fancy_print("Error opening registry.csv", RED);
+        return 0;
+    }
+
+    if (!out) {
+        fancy_print("Error creating temp.csv", RED);
+        fclose(in);
+        return 0;
+    }
+
+    char buffer[155];
+    int current_line = 0;
+
+    while (fgets(buffer, sizeof(buffer), in)) {
+        if (current_line != line_index) {
+            fputs(buffer, out);
+        }
+        current_line++;
+    }
+
+    fclose(in);
+    fclose(out);
+
+    remove("./data/registry.csv");
+    rename("./data/temp.csv", "./data/registry.csv");
+
     return 1;
 }
 

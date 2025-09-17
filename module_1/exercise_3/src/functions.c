@@ -7,11 +7,11 @@
  */
 void fancy_print(char *text, int color)
 {
-    if (color == 1)
+    if (color == 11)
         printf("\n\033[1;31m%s\033[0m\n", text);
-    else if (color == 2)
+    else if (color == 12)
         printf("\n\033[1;32m%s\033[0m\n", text);
-    else if (color == 3)
+    else if (color == 13)
         printf("\n\033[1;34m%s\033[0m\n", text);
     else
         printf("\n%s\n", text);
@@ -40,12 +40,12 @@ void add_vehicle ()
     vehicle.license_plate = read_string();
 
     printf("Owner name: ");
-    owner.name = read_string();
+    vehicle.owner.name = read_string();
 
     printf("Owner age: ");
-    owner.age = read_int();
+    vehicle.owner.age = read_int();
 
-    if (!write_to_registry(vehicle, owner))
+    if (!write_to_registry(vehicle))
         return;
 
     fancy_print("✅ The vehicle was added.", 0);
@@ -53,7 +53,7 @@ void add_vehicle ()
     free(vehicle.type);
     free(vehicle.brand);
     free(vehicle.license_plate);
-    free(owner.name);
+    free(vehicle.owner.name);
 }
 
 void add_random_vehicle() 
@@ -73,23 +73,65 @@ void add_random_vehicle()
     v.type = types[rand() % 5];
     v.brand = brands[rand() % 5];
     v.license_plate = licence_plates[rand() % 5];
-    p.name = names[rand() % 5];
-    p.age = ages[rand() % 5];
+    v.owner.name = names[rand() % 5];
+    v.owner.age = ages[rand() % 5];
     
-    if (!write_to_registry(v, p))
+    if (!write_to_registry(v))
         return;
 
     fancy_print("✅ Following random generated car was added:", 0);
-    read_csv(count_lines() - 1, 1);
+    print_registry(count_lines() - 1, 1);
 }
 
-// void remove_vehicle ()
-// {
-//     int vehicle_index;
+void remove_vehicle ()
+{
+    int vehicle_index;
+    int vehicle_count = count_lines();
 
-//     printf("\nEnter vehicle index (1-%d): ", count_lines());
-//     vehicle_index = read_int();
-// }
+    printf("\nEnter vehicle index (1-%d): ", vehicle_count);
+    vehicle_index = read_int();
+
+    if (vehicle_index < 1 || vehicle_index > vehicle_count) {
+        fancy_print("Invalid index", RED);
+        return;
+    }
+
+    delete_line(vehicle_index - 1);
+
+    fancy_print("✅ Vehicle was succesfully removed.", 0);
+}
+
+void sort_registry()
+{
+    int vehicle_count = count_lines();
+    struct vehicle vehicles[vehicle_count];
+    int i, e;
+
+    i = 0;
+
+    while (i < vehicle_count) {
+        vehicles[i] = get_data_from_line(get_line(i));
+        i++;
+    }
+
+    i = 0;
+    e = 0;
+
+    while (i < vehicle_count - 1) {
+        e = 0;
+        while (e < vehicle_count - i - 1) {
+            if (strcmp(vehicles[e].owner.name, vehicles[e + 1].owner.name) > 0) {
+                struct vehicle temp = vehicles[e];
+                vehicles[e] = vehicles[e + 1];
+                vehicles[e + 1] = temp;
+            }
+            e++;
+        }
+        i++;
+    }
+
+    // I ended here
+}
 
 void show_info_one_vehicle () {
     int vehicle_index;
@@ -101,5 +143,5 @@ void show_info_one_vehicle () {
         fancy_print("Invalid index", RED);
         return;
     }
-    read_csv(vehicle_index - 1, 1);
+    print_registry(vehicle_index - 1, 1);
 }

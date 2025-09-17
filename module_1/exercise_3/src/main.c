@@ -22,9 +22,12 @@ void execute_option(int option_num)
         case 1:
             add_vehicle();
             break;
-        // case 2:
-        //     remove_vehicle();
-        //     break;
+        case 2:
+            remove_vehicle();
+            break;
+        case 3:
+            sort_registry();
+            break;
         case 6:
             add_random_vehicle();
             break;
@@ -32,7 +35,7 @@ void execute_option(int option_num)
             show_info_one_vehicle();
             break;
         case 5:
-            read_csv(0, count_lines());
+            print_registry(0, count_lines());
             break;
         default:
             fancy_print("Invalid option.", RED);
