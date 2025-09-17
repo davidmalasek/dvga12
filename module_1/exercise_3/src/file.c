@@ -13,9 +13,9 @@ int is_registry_available()
     return 1;
 }
 
-int write_to_registry(struct vehicle v)
+int write_to_registry(char *path, struct vehicle v)
 {
-    FILE *file = fopen("./data/registry.csv", "a");
+    FILE *file = fopen(path, "a");
     if (!file) {
         fancy_print("There was an error while opening the registry.", RED);
         return 0;
@@ -47,24 +47,29 @@ int count_lines()
 }
 
 /**
- * Returns a vehicle struct from a line from csv file.
+ * Extracts vehicle data from a line (string) from csv file.
+ * Returned value must be freed.
  */
 struct vehicle get_data_from_line(char *line)
 {
     struct vehicle vehicle;
-
+    
     // Remove newline
     line[strcspn(line, "\n")] = '\0';
 
-    vehicle.type = strtok(line, ",");
-    vehicle.brand = strtok(NULL, ",");
-    vehicle.license_plate = strtok(NULL, ",");
-    vehicle.owner.name = strtok(NULL, ",");
+    vehicle.type = strdup(strtok(line, ","));
+    vehicle.brand = strdup(strtok(NULL, ","));
+    vehicle.license_plate = strdup(strtok(NULL, ","));
+    vehicle.owner.name = strdup(strtok(NULL, ","));
     vehicle.owner.age = atoi(strtok(NULL, ","));
 
     return (vehicle);
 }
 
+/**
+ * Returns a line (string) from registry.
+ * Returned value must be freed.
+ */
 char *get_line(int line_index)
 {
     FILE *file = fopen("./data/registry.csv", "r");
@@ -78,11 +83,20 @@ char *get_line(int line_index)
 
     while (fgets(line, sizeof(line), file)) {
 
-        if (current_line == line_index)
-            return line;
+        if (current_line == line_index) {
+            fclose(file);
+
+            char *result = malloc(strlen(line) + 1);
+            if (!result)
+                return NULL;
+            result = strcpy(result, line);
+
+            return result;
+        }
         current_line++;
     }
     fclose(file);
+    return NULL;
 }
 
 /*

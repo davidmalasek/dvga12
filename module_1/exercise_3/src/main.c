@@ -4,8 +4,8 @@
 
 void print_options()
 {
-    printf("\n\033[1;34mOPTIONS\033[0m\n\n");
-    printf("1. Add vehicle \n");
+    fancy_print("OPTIONS", BLUE);
+    printf("\n1. Add vehicle \n");
     printf("2. Remove vehicle \n");
     printf("3. Sort \n");
     printf("4. Info \n");
@@ -20,22 +20,31 @@ void execute_option(int option_num)
 {
     switch (option_num) {
         case 1:
-            add_vehicle();
+            if (add_vehicle())
+                fancy_print("✅ Vehicle was succesfully added.", 0);
             break;
         case 2:
-            remove_vehicle();
+            if (remove_vehicle())
+                fancy_print("✅ Vehicle was succesfully removed.", 0);
             break;
         case 3:
-            sort_registry();
-            break;
-        case 6:
-            add_random_vehicle();
+            if (sort_registry())
+                fancy_print("✅ Registry was succesfully sorted.", 0);
             break;
         case 4:
             show_info_one_vehicle();
             break;
         case 5:
             print_registry(0, count_lines());
+            break;
+        case 6:
+            if (add_random_vehicle()) {
+                fancy_print("✅ Following random generated car was added:", 0);
+                print_registry(count_lines() - 1, 1);
+            }
+            break;
+        case 7:
+            search_for_owner();
             break;
         default:
             fancy_print("Invalid option.", RED);
