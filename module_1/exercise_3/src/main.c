@@ -7,11 +7,11 @@ void print_options()
     fancy_print("OPTIONS", BLUE);
     printf("1. Add vehicle \n");
     printf("2. Remove vehicle \n");
-    printf("3. Sort \n");
-    printf("4. Info \n");
-    printf("5. Show all \n");
-    printf("6. Add random \n");
-    printf("7. Search \n");
+    printf("3. Sort vehicles \n");
+    printf("4. Info about vehicle \n");
+    printf("5. Show all vehicles \n");
+    printf("6. Add random vehicle\n");
+    printf("7. Search vehicle \n");
     printf("0. Quit \n");
     printf("\nSelect option: ");
 }

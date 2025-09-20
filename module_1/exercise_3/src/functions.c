@@ -282,18 +282,26 @@ int add_random_vehicle()
     // For seeding the random generator once
     srand((unsigned) time(NULL));
 
-    v.type = types[rand() % 5];
-    v.brand = brands[rand() % 5];
-    v.license_plate = licence_plates[rand() % 5];
-    v.owner.name = names[rand() % 5];
+    v.type = strdup(types[rand() % 5]);
+    v.brand = strdup(brands[rand() % 5]);
+    v.license_plate = strdup(licence_plates[rand() % 5]);
+    v.owner.name = strdup(names[rand() % 5]);
     v.owner.age = ages[rand() % 5];
     
     if (!write_to_registry("./data/registry.csv", v)) {
         fancy_print("ERROR", RED);
         printf("Could not write to registry.\n");
+        free(v.type);
+        free(v.brand);
+        free(v.license_plate);
+        free(v.owner.name);
         return 0;
     }
 
+    free(v.type);
+    free(v.brand);
+    free(v.license_plate);
+    free(v.owner.name);
     return 1;
 }
 
