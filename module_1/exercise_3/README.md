@@ -8,10 +8,11 @@ Follow the menu prompts to manage the vehicle registry.
 
 # TODO
 
+- [ ] Free everything read_string() returns
+- [ ] Print errors using perror()?
 - [x] Validate inputs and return error messages when needed
 - [x] Don't let the user input diacritics
 - [x] Limit amout of chars for each field
-- [ ] Print errors using perror()?
 - [x] If registry.csv does not exist, program must create it
 - [x] Define buffer (~ input limit) in header file
 - [x] Correct the table view
