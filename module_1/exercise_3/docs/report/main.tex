@@ -1,0 +1,364 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{appendix}
+\usepackage{graphicx}
+
+\usepackage{times}
+
+\lstset{breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  basicstyle=\ttfamily\small
+}
+
+% --- Change these three lines as needed ---
+\title{Exercise 3 Report}
+\author{David Malášek}
+\date{\today}
+
+% --- Add custom fields for birth date and statement ---
+\newcommand{\birthdate}{13 May 2004}
+\newcommand{\affirmation}{I hereby affirm that this report represents my own independent work and that I have neither given nor received unauthorized assistance in its completion.}
+
+\makeatletter
+\renewcommand{\maketitle}{%
+  \bgroup\setlength{\parindent}{0pt}
+  \begin{flushleft}
+
+  \vspace*{-1cm}
+  \noindent\includegraphics[width=3cm]{kaulogo.jpg}
+  \vspace{2cm}
+
+  \hrule\vspace{0.5cm}
+  \textbf{\Huge\@title}
+  \vspace{0.5cm}\hrule
+  
+  \vspace{0.5cm}
+  \@author \\
+  Born: \birthdate
+  
+  \vspace{0.5cm}
+  \@date
+  
+  \vspace{0.5cm}
+  DVGA12 Programming and Data Structures
+  
+  Computer Science
+  
+  Faculty of Health, Science and Technology
+  
+  \vspace{0.5cm}\hrule
+
+  \vspace{1.5cm}
+  \textit{\affirmation}
+
+  \end{flushleft}
+  \egroup
+}
+\makeatother
+
+
+\begin{document}
+
+\maketitle  % Print title, author, date
+
+\newpage
+
+\tableofcontents  % Print table of contents
+
+\newpage
+
+\section{Introduction}
+
+This report represents the implementation of Exercise 3 - a car registry system written in C. The program simulates a registry storing up to ten vehicles and their respective owners. User can manipulate with the registry through text-based user interface. The aim of the assignment is to provide students with practical experience of file handling, safe input, structured data management, error handling and modularity.
+
+\section{Overview}
+
+In the text-based interface, user can choose between eight options. Seven options perfom registry operations, while the eighth terminates the program. Below is the summary of their functionality:
+
+\begin{enumerate}
+  \item \textbf{Add vehicle} \\
+  The program prompts the user for vehicle type, brand, license plate, owner name and owner age. A new record with this information is added to the registry.
+
+  \item \textbf{Remove vehicle} \\
+  Program requests an index of a vehicle in the registry to be removed. If valid, the record is removed from the registry.
+
+  \item \textbf{Sort vehicles} \\
+  Vehicles in the registry are sorted alphabetically based on the owner name.
+
+  \item \textbf{Info about vehicle} \\
+  The program requests an index of a vehicle. Information about this vehicle is printed.
+
+  \item \textbf{Show all vehicles} \\
+  Program prints information about all the vehicles in the registry.
+
+  \item \textbf{Add random vehicle} \\
+  A randomized vehicle record is created using predefined lists and inserted to the registry.
+
+  \item \textbf{Search vehicle} \\
+    The program prompts the user to enter an owner's name. The input is then used to search the registry, and the first matching vehicle record is displayed.
+
+  \item \textbf{Quit} \\
+  The program terminates.
+\end{enumerate}
+
+To enhance the readability of the interface, the program highlights titles (e.g. ERROR, WARNING, OPTIONS) using color and displays the registry contents in a tabular format. 
+
+Error messages are displayed when a program fails or when invalid input is provided. Warning messages are issued in the case of non-critical problems that are not directly caused by user input.
+
+\section{Detailed Description}
+
+\subsection{Data Structures}
+
+Program defines primary data structures: \texttt{vehicle} and \texttt{person}.
+Structure \texttt{vehicle} contains three string attributes: (\texttt{type}, \texttt{brand}, \texttt{license\_plate}) 
+as well as second \texttt{person} structure, which represents the owner.
+\texttt{person} contains a string property \texttt{name} and an integer attribute \texttt{age}. 
+This way a vehicle is associated with exactly one owner, which is required by the assignment.
+
+    \begin{lstlisting}[language=C, caption={Definition of data structures}]
+    typedef struct {
+        char *type;
+        char *brand;
+        char *license_plate;
+        person owner;
+    } vehicle;
+    
+    typedef struct {
+        char *name;
+        int age;
+    } person;
+    \end{lstlisting}
+
+\subsection{Registry}
+
+From a storage perspective, the registry is implemented as a plain CSV file. Each value is separated by a comma and every record is stored on a separate line.
+
+    \begin{lstlisting}[language=, caption={Sample contents of registry.csv}]
+    Sport,Aston Martin,1BV0641,David Malasek,21
+    SUV,Audi,SKODA88X,Elon Musk,50
+    Electric,Tesla,EL0NHATER,Jaroslav Beck,46
+    Pickup,Mercedes,1BVX999,Michael Jackson,21
+    \end{lstlisting}
+
+\subsection{Main functionalities}
+
+This section provides a detailed description of the logic implemented for each option.
+
+\begin{enumerate}
+  \item \textbf{Add vehicle} \\
+
+  First, the function verifies whether the registry has reached its maximum capacity. If the registry is full, the execution ends. 
+  Otherwise, the program proceeds to input validation for each field.
+  The program prompts the user to enter specific value (eg., vehicle type) and the input is read using the \texttt{fgets()} function. \\
+
+  For each input there is a two step validation process. If the input was read successfully, the function first verifies whether the value lies withing the specified limits.
+  For strings, this refers to the maximum number of characters, while integer values are validated against specified minimum and maximum limits.
+  Second, the function checks whether the string input consists only of allowed characters. \\
+
+  Following code illustrates the retrieval and validation of the \texttt{type} value:
+
+        \begin{lstlisting}[language=C, caption={Retrieving and validating vehicle data}]
+    printf("\nType: ");
+    vehicle.type = read_string();
+
+    if (!vehicle.type) {
+        fancy_print("ERROR", RED);
+        printf("Could not read the vehicle type.\n");
+        return 0;
+    }
+
+    if (strlen(vehicle.type) > TYPE_LIMIT) {
+        fancy_print("ERROR", RED);
+        printf("Entered vehicle type exceeded length of %d characters.\n", TYPE_LIMIT);
+        return 0;
+    } else if (!is_valid(vehicle.type, TYPE)) {
+        fancy_print("ERROR", RED);
+        printf("Invalid vehicle type. Use only alphabet letters.\n");
+        return 0;
+    }
+    \end{lstlisting}
+  
+  The same procedure is applied to all string fields. The \texttt{age} field is validated only against its permitted numerical range.
+
+  After successful validation, the values are stored in the registry using a dedicated function:
+
+    \begin{lstlisting}[language=C, caption={Writing to the registry}]
+    int write_to_registry(char *path, vehicle v)
+    {
+        FILE *file = fopen(path, "a");
+        if (!file)
+            return 0;
+    
+        fprintf(file, "%s,%s,%s,%s,%d\n", trim(v.type), trim(v.brand), ...);
+        fclose(file);
+        return 1;
+    }
+    \end{lstlisting}
+
+  Eeach value is trimmed to remove leading and trailing whitespace before being stored to the registry. The above example shortens the \texttt{fprintf()} statement for readability.
+
+  \item \textbf{Remove vehicle} \\
+
+  The function first verifies that the registry is not empty. Then it prompts the user to enter the index of a vehicle to be removed.
+
+  \textbf{Although the program expects the user to provide a one-based index, the internal logic operates on a zero-based index.}
+
+   If the index is valid, function then proceeds to the deletion.
+
+   The removal process is implemented using a temporary file. All lines are copied from the original registry file into the temporary file, except for the line with the specified index. After the copying is completed, the original file is replaced with the temporary file.
+
+        \begin{lstlisting}[language=C, caption={Deleting a line in the registry}]
+        int delete_line(int line_index)
+        {
+            FILE *in = fopen("./data/registry.csv", "r");
+            FILE *out = fopen("./data/temp.csv", "w");
+        
+            if (!in)
+                return 0;
+        
+            if (!out) {
+                fclose(in);
+                return 0;
+            }
+        
+            char buffer[(INPUT_LIMIT - 1) * 5 + 4 + 1 + 1];
+            int current_line = 0;
+        
+            while (fgets(buffer, sizeof(buffer), in)) {
+                if (current_line != line_index) {
+                    fputs(buffer, out);
+                }
+                current_line++;
+            }
+        
+            fclose(in);
+            fclose(out);
+        
+            remove("./data/registry.csv");
+            rename("./data/temp.csv", "./data/registry.csv");
+        
+            return 1;
+        }
+    \end{lstlisting}
+
+  \item \textbf{Sort vehicles} \\
+
+    First, the function verifies whether the registry is empty or contains only one record. In both cases the sorting is unnecessary, and the function ends. Otherwise, the entire registry is loaded into an array of \texttt{vehicle} structures using \texttt{get\_vehicles()} function, which is shown below: \\
+    
+        \begin{lstlisting}[language=C, caption={CSV line to data structure transformation}]
+            vehicle *get_vehicles()
+        {
+            int vehicle_count = count_lines();
+            vehicle *vehicles = malloc(vehicle_count * sizeof(vehicle));
+        
+            if (!vehicles)
+                return NULL;
+        
+            int i = 0;
+            char *current_line;
+        
+            while (i < vehicle_count) {
+                current_line = get_line(i);
+                vehicles[i] = get_data_from_line(current_line);
+                free(current_line);
+                i++;
+            }
+        
+            return vehicles;
+        }
+        \end{lstlisting}
+
+    The sorting procedure is implemented using the bubble sort algorithm. Adjacent elements are compared by comparing the owner names with the \texttt{strcmp()} function, and their positions are swapped if required.
+
+        \begin{lstlisting}[language=C, caption={Bubble sort algorithm}]
+        while (i < vehicle_count - 1) {
+            e = 0;
+            while (e < vehicle_count - i - 1) {
+                if (strcmp(vehicles[e].owner.name, vehicles[e + 1].owner.name) > 0) {
+                    vehicle temp = vehicles[e];
+                    vehicles[e] = vehicles[e + 1];
+                    vehicles[e + 1] = temp;
+                }
+                e++;
+            }
+            i++;
+        }
+    \end{lstlisting}
+
+After sorting, the program writes the reordered vehicles to a temporary file. 
+The original registry file is then removed and replaced with the sorted version. 
+Because the \texttt{get\_vehicles()} function dynamically allocates memory for the array of \texttt{vehicle} structures, this memory is freed at the end of the function.
+
+  \item \textbf{Info about vehicle} \\
+  First, the program verifies whether the registry is not empty. Then it prompts the user to enter an index, which is then validated. If the index is valid, the program retrieves the corresponding record and displays all information about the vehicle and its owner in the terminal.
+
+  \item \textbf{Show all vehicles} \\
+
+The function first verifies that the registry is not empty. It then iterates through the registry and prints information about each stored vehicle and its owner. 
+
+  \item \textbf{Add random vehicle} \\
+
+The function first verifies that the registry is not full. If it is not full, the program generates a new vehicle by randomly selecting attributes from five predefined data sets. 
+The random index is produced using the \texttt{srand()} and \texttt{time()} functions, as illustrated below:
+
+    \begin{lstlisting}[language=C, caption={Random selection}]
+    srand((unsigned) time(NULL));
+
+    v.type = strdup(types[rand() % 5]);
+    \end{lstlisting}
+
+    The randomly generated vehicle is then added to the registry.
+
+  \item \textbf{Search vehicle} \\
+
+    The function first verifies that the registry is not empty. It then prompts the user to enter a case-sensitive query corresponding to the owner’s name. The input is then validated. \\
+    
+    The assignment requires the usage of binary search. A binary search is a ``divide and conquer'' algorithm that requires the array to be sorted prior to searching. The algorithm is called binary because it repeatedly splits the array into two halves. It begins by comparing the target value with the middle element of the array, and then continues the search in the half where the element may be located \cite{bbc_binarysearch}.
+
+    In this case, the query string is compared with the owner names stored in the registry. If a match or substring occurrence is found, the corresponding vehicle information is displayed. If no match is found, the program displays a warning message. 
+    Dynamically allocated memory used for storing the vehicle array is freed at the end of the procedure.
+
+  \item \textbf{Quit} \\
+  The program terminates.
+\end{enumerate}
+
+\subsection{Program structure}
+
+To ensure a modular architecture, the program is divided into four C source files (\texttt{main.c}, \texttt{file.c}, \texttt{functions.c}, \texttt{utils.c}), one header file (\texttt{file.h}), and one CSV file (\texttt{registry.csv}). \\
+
+All C source files are located in the \texttt{src} directory. The file \texttt{main.c} contains the main loop, which displays the available options and retrieves the user’s selection. 
+
+The implementation of each option is contained in \texttt{functions.c}. All file operations are handled in \texttt{file.c}, while helper functions, such as \texttt{is\_valid()} and \texttt{count\_fields()}, are implemented in \texttt{utils.c}. \\
+
+The single header file, \texttt{file.h}, is placed in the \texttt{include} directory. It contains all required library imports, constant definitions, structure declarations, and function prototypes. \\
+
+The registry data are stored in the \texttt{data} directory as \texttt{registry.csv}. Finally, the \texttt{Makefile} is located in the root directory.
+
+\section{Lessons learned}
+
+Since I had some prior experience with C programming, I did not encounter major obstacles during this project. \\
+
+One important new skill was handling user input during program runtime. Previously, I had only worked with input through \texttt{argc} and \texttt{argv}. Accepting input during runtime required making decisions about buffer sizes and safe input handling. I eventually set the input limit to 32 characters, reserving the final position for the null terminator. This restriction also applied to the program’s value limits: each attribute of a vehicle (type, brand, ...) was given its own maximum length. The program first verifies that the input does not exceed the buffer capacity, and only then checks whether it respects the allowed limit. From these processes I learned the importance of preventing buffer overflows and ensuring safe handling of user input. \\
+
+Another new area for me was file handling in C. After researching possible data storage approaches, I determined that a CSV file was the most suitable solution for this project. The two main challenges I faced were implementing deletion of a specific line in the file and reading and parsing data from it. \\
+
+Finally, regarding the technical restrictions defined in the assignment, I had no difficulty avoiding the use of global variables.
+
+\section{Conclusion}
+
+In this report, I described my delivery of Exercise 3. My approach was also to keep the project clean, and the code to be understandable - I left comments wherever I felt like there is a purpose. I tried my best to handle all possible edge cases and tried to make the user experience as smooth as possible. 
+
+This report has presented the implementation of Exercise 3, a vehicle registry program written in C. The project was designed with a focus on clarity and maintainability of code, supported by meaningful comments and a modular structure. 
+
+Special attention was given to handling edge cases and error checking, so that the program performs reliably under a variety of user inputs. 
+
+Lastly, the interface was designed to provide a smooth user experience, balancing functionality with readability.
+
+\bibliography{references}
+
+\end{document}
