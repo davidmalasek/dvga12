@@ -35,16 +35,16 @@
 #define AGE_WIDTH 3
 
 typedef struct {
+    char *name;
+    int age;
+} person;
+
+typedef struct {
     char *type;
     char *brand;
     char *license_plate;
     person owner;
 } vehicle;
-
-typedef struct {
-    char *name;
-    int age;
-} person;
 
 // utils.c
 void fancy_print(char *text, int color);
