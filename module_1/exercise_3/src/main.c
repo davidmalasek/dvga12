@@ -18,6 +18,12 @@ void print_options()
 
 void execute_option(int option_num)
 {
+    if (!registry_check()) {
+        fancy_print("ERROR", RED);
+        printf("Registry could not be created.\n");
+        return;
+    }
+
     switch (option_num) {
         case 1:
             if (add_vehicle()) {
@@ -71,6 +77,7 @@ int main()
     }
 
     do {
+        registry_check();
         print_options();
         selected_option = read_int();
         if (selected_option != 0)

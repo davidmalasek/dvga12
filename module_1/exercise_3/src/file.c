@@ -183,7 +183,6 @@ char *read_string()
     return (result);
 }
 
-
 /**
  * Returns an integer from stdin.
  */

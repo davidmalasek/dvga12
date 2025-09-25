@@ -134,7 +134,7 @@ int remove_vehicle ()
 
     if (vehicle_index < 1 || vehicle_index > vehicle_count) {
         fancy_print("ERROR", RED);
-        printf("Index %d is not valid.\n", vehicle_index);
+        printf("Entered index is not valid.\n");
         return 0;
     }
 
@@ -175,6 +175,7 @@ int sort_registry()
     // Bubble sort for sorting
     while (i < vehicle_count - 1) {
         e = 0;
+        // Stops earlier each pass, because the last element is already sorted
         while (e < vehicle_count - i - 1) {
             if (strcmp(vehicles[e].owner.name, vehicles[e + 1].owner.name) > 0) {
                 vehicle temp = vehicles[e];
@@ -236,7 +237,7 @@ void show_info_one_vehicle ()
 
     if (vehicle_index > vehicle_count || vehicle_index < 1) {
         fancy_print("ERROR", RED);
-        printf("Index %d is not valid.\n", vehicle_index);
+        printf("Entered index is not valid.\n");
         return;
     }
     if (!print_registry(vehicle_index - 1, 1)) {
@@ -267,7 +268,7 @@ int add_random_vehicle()
 {
     if (count_lines() == 10) {
         fancy_print("WARNING", YELLOW);
-        printf("Cannot add vehicle, the registry is full.\n");
+        printf("Cannot add a random vehicle, the registry is full.\n");
         return 0;
     }
 
@@ -347,6 +348,7 @@ int search_for_owner()
     while (left <= right) {
         mid = left + (right - left) / 2;
 
+        // Check for first occurance of a substring in a string
         if (strstr(vehicles[mid].owner.name, query) != NULL) {
             free(query);
             free_vehicles(vehicles);
@@ -357,7 +359,8 @@ int search_for_owner()
             }
             return 1;
         }
-        
+
+        // Compare and decide if to proceed with right or left part
         if (strcmp(vehicles[mid].owner.name, query) < 0) {
             left = mid + 1;
         } else {
