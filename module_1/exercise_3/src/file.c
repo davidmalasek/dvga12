@@ -110,7 +110,6 @@ int print_registry(int start, int print_count)
     vehicle v;
 
     printf("\n%-*s %-*s %-*s %-*s %-*s %s\n", INDEX_WIDTH, "Index", TYPE_LIMIT + PADDING, "Type", BRAND_LIMIT + PADDING, "Brand", LICENSE_PLATE_LIMIT + PADDING, "Plate", OWNER_NAME_LIMIT + PADDING, "Name", "Age");
-    //printf("----------------------------------------------------------------------\n");
     print_divider();
 
     while (fgets(line, sizeof(line), file)) {
@@ -127,6 +126,9 @@ int print_registry(int start, int print_count)
     return 1;
 }
 
+/**
+ * Deletes a line on specified index in the CSV file.
+ */
 int delete_line(int line_index)
 {
     FILE *in = fopen("./data/registry.csv", "r");
@@ -159,6 +161,9 @@ int delete_line(int line_index)
     return 1;
 }
 
+/**
+ * Returns a string from stdin, which needs to be freed after use.
+ */
 char *read_string()
 {
     char buffer[INPUT_LIMIT];
@@ -178,6 +183,10 @@ char *read_string()
     return (result);
 }
 
+
+/**
+ * Returns an integer from stdin.
+ */
 int read_int()
 {
     char buffer[INPUT_LIMIT];

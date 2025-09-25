@@ -311,6 +311,11 @@ int search_for_owner()
         fancy_print("WARNING", YELLOW);
         printf("The registry is empty.\n");
         return 0;
+    } else if (count_lines() == 1) {
+        fancy_print("WARNING", YELLOW);
+        printf("There is only one vehicle in registry, here it is:\n");
+        print_registry(0, 1);
+        return 0;
     }
 
     char *query;
@@ -319,6 +324,7 @@ int search_for_owner()
     query = read_string();
 
     if (!is_valid(query, OWNER_NAME)) {
+        free(query);
         fancy_print("ERROR", RED);
         printf("Invalid owner name. Use only alphabet letters and spaces.\n");
         return 0;
@@ -326,6 +332,13 @@ int search_for_owner()
     
     sort_registry();
     vehicle *vehicles = get_vehicles();
+
+    if (!vehicles) {
+        free(query);
+        fancy_print("ERROR", RED);
+        printf("Failed to load vehicles from registry.\n");
+        return 0;
+    }
 
     int left = 0;
     int right = count_lines() - 1;
@@ -335,6 +348,7 @@ int search_for_owner()
         mid = left + (right - left) / 2;
 
         if (strstr(vehicles[mid].owner.name, query) != NULL) {
+            free(query);
             free_vehicles(vehicles);
             if (!print_registry(mid, 1)) {
                 fancy_print("ERROR", RED);
@@ -351,6 +365,7 @@ int search_for_owner()
         }
     }
     free_vehicles(vehicles);
+    free(query);
 
     fancy_print("WARNING", YELLOW);
     printf("Could not find vehicle assigned to entered owner name.\n");

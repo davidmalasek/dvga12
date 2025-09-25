@@ -8,8 +8,7 @@ Follow the menu prompts to manage the vehicle registry.
 
 # TODO
 
-- [ ] Free everything read_string() returns
-- [ ] Print errors using perror()?
+- [x] Free everything read_string() returns
 - [x] Validate inputs and return error messages when needed
 - [x] Don't let the user input diacritics
 - [x] Limit amout of chars for each field
