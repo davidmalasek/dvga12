@@ -23,7 +23,7 @@ int add_vehicle ()
 
     if (strlen(vehicle.type) > TYPE_LIMIT) {
         fancy_print("ERROR", RED);
-        printf("Entered vehicle type exceeded length of %d characters.\n", TYPE_LIMIT);
+        printf("Entered vehicle type exceeded the allowed length of %d characters.\n", TYPE_LIMIT);
         return 0;
     } else if (!is_valid(vehicle.type, TYPE)) {
         fancy_print("ERROR", RED);
@@ -42,7 +42,7 @@ int add_vehicle ()
 
     if (strlen(vehicle.brand) > BRAND_LIMIT) {
         fancy_print("ERROR", RED);
-        printf("Entered vehicle brand exceeded length of %d characters.\n", BRAND_LIMIT);
+        printf("Entered vehicle brand exceeded the allowed length of %d characters.\n", BRAND_LIMIT);
         return 0;
     } else if (!is_valid(vehicle.brand, BRAND)) {
         fancy_print("ERROR", RED);
@@ -59,9 +59,27 @@ int add_vehicle ()
         return 0;
     }
 
+    if (!is_license_plate_unique(vehicle.license_plate)) {
+        // Keep prompting the user for license plate until it's unique in the registry
+        do {
+            fancy_print("WARNING", YELLOW);
+            printf("Entered license plate already exists. Enter a new one.\n\n");
+
+
+            printf("License plate: ");
+            vehicle.license_plate = read_string();
+
+            if (!vehicle.license_plate) {
+                fancy_print("ERROR", RED);
+                printf("Could not read the vehicle license plate.\n");
+                return 0;
+            }
+        } while (!is_license_plate_unique(vehicle.license_plate));
+    }
+
     if (strlen(vehicle.license_plate) > LICENSE_PLATE_LIMIT) {
         fancy_print("ERROR", RED);
-        printf("Entered license plate exceeded length of %d characters.\n", LICENSE_PLATE_LIMIT);
+        printf("Entered license plate exceeded the allowed length of %d characters.\n", LICENSE_PLATE_LIMIT);
         return 0;
     } else if (!is_valid(vehicle.license_plate, LICENSE_PLATE)) {
         fancy_print("ERROR", RED);
@@ -80,7 +98,7 @@ int add_vehicle ()
 
     if (strlen(vehicle.owner.name) > OWNER_NAME_LIMIT) {
         fancy_print("ERROR", RED);
-        printf("Entered owner name exceeded length of %d characters.\n", OWNER_NAME_LIMIT);
+        printf("Entered owner name exceeded the allowed length of %d characters.\n", OWNER_NAME_LIMIT);
         return 0;
     } else if (!is_valid(vehicle.owner.name, OWNER_NAME)) {
         fancy_print("ERROR", RED);
@@ -273,21 +291,32 @@ int add_random_vehicle()
     }
 
     char *types[] = {"SUV", "Cabrio", "Hatchback", "Sedan", "Pickup"};
-    char *brands[] = {"Skoda", "BMW", "Audi", "Mercedes", "Tesla"};
-    char *licence_plates[] = {"ABC1234", "1BVX999", "CZ2025XY", "TOY2023A", "SKODA88X"};
-    char *names[] = {"John Doe", "Elon Musk", "Tom Cruise", "Brad Pitt", "Michael Jackson"};
-    int ages[] = {21, 30, 50, 33, 67};
+    char *brands[] = {"Skoda", "BMW", "Audi", "Mercedes", "Tesla", "Volvo", "Toyota", "Honda"};
+    char *names[] = {"John Doe", "Elon Musk", "Tom Cruise", "Brad Pitt", "Michael Jackson", "Peter Griffin", "Just Dave", "Bob", "Sola The Driver"};
 
     vehicle v;
 
-    // For seeding the random generator once
-    srand((unsigned) time(NULL));
-
     v.type = strdup(types[rand() % 5]);
     v.brand = strdup(brands[rand() % 5]);
-    v.license_plate = strdup(licence_plates[rand() % 5]);
+
+    char *random_license_plate;
+
+    do {
+        random_license_plate = get_random_license_plate();
+
+        if (!random_license_plate) {
+            free(v.type);
+            free(v.brand);
+            fancy_print("ERROR", RED);
+            printf("Could not generate random license plate.\n");
+            return 0; 
+        }
+
+    } while (is_license_plate_unique(random_license_plate) == 0);
+
+    v.license_plate = random_license_plate;
     v.owner.name = strdup(names[rand() % 5]);
-    v.owner.age = ages[rand() % 5];
+    v.owner.age = get_random_number(18, 85);
     
     if (!write_to_registry("./data/registry.csv", v)) {
         fancy_print("ERROR", RED);

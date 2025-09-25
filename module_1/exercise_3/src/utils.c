@@ -237,3 +237,49 @@ vehicle get_data_from_line(char *line)
 
     return (vehicle);
 }
+
+int get_random_number(int min, int max)
+{
+    int random_number = min + rand() % (max - min + 1);
+
+    return random_number;
+}
+
+/**
+ * Generates a random license plate. Returned string must be freed.
+ */
+char *get_random_license_plate()
+{
+    char *random_license_plate = malloc(LICENSE_PLATE_LIMIT + 1);
+    if (!random_license_plate)
+        return NULL;
+
+    random_license_plate[0] = (char)get_random_number(65, 90); // A-Z
+    random_license_plate[1] = (char)get_random_number(65, 90); // A-Z
+    random_license_plate[2] = (char)get_random_number(65, 90); // A-Z
+    random_license_plate[3] = (char)get_random_number(48, 57); // 0-9
+    random_license_plate[4] = (char)get_random_number(48, 57); // 0-9
+    random_license_plate[5] = (char)get_random_number(48, 57); // 0-9
+    random_license_plate[6] = (char)get_random_number(48, 57); // 0-9
+    random_license_plate[7] = '\0';
+
+    return random_license_plate;
+}
+
+int is_license_plate_unique(char *license_plate)
+{
+    vehicle *vehicles = get_vehicles();
+
+    if (!vehicles)
+        return -1;
+
+    int i = 0; 
+
+    while (i < count_lines()) {
+        if (strcmp(vehicles[i].license_plate, license_plate) == 0)
+            return 0;
+        i++;
+    }
+    free_vehicles(vehicles);
+    return 1;
+}

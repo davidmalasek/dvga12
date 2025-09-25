@@ -25,7 +25,7 @@
 #define INPUT_LIMIT 32
 #define TYPE_LIMIT 12
 #define BRAND_LIMIT 12
-#define LICENSE_PLATE_LIMIT 10
+#define LICENSE_PLATE_LIMIT 7
 #define OWNER_NAME_LIMIT 20
 #define OWNER_AGE_LIMIT 100
 
@@ -57,6 +57,9 @@ void print_divider();
 int is_registry_valid();
 int count_fields(char *line);
 vehicle get_data_from_line(char *line);
+int get_random_number(int min, int max);
+char *get_random_license_plate();
+int is_license_plate_unique(char *license_plate);
 
 // file.c
 int registry_check();

@@ -174,7 +174,7 @@ This section provides a detailed description of the logic implemented for each o
 
     if (strlen(vehicle.type) > TYPE_LIMIT) {
         fancy_print("ERROR", RED);
-        printf("Entered vehicle type exceeded length of %d characters.\n", TYPE_LIMIT);
+        printf("Entered vehicle type exceeded the allowed length of %d characters.\n", TYPE_LIMIT);
         return 0;
     } else if (!is_valid(vehicle.type, TYPE)) {
         fancy_print("ERROR", RED);

@@ -76,6 +76,9 @@ int main()
         return 0;
     }
 
+    // For seeding the random generator once
+    srand(time(NULL));
+
     do {
         registry_check();
         print_options();

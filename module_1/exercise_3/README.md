@@ -8,8 +8,8 @@ Follow the menu prompts to manage the vehicle registry.
 
 # TODO
 
-- [] License plates have to be always unique (10 unique records in the registry)
-- [] Randomize the age, so it is not picked from a list but rather generated say from 18-85
+- [x] License plates have to be always unique (10 unique records in the registry)
+- [x] Randomize the age, so it is not picked from a list but rather generated say from 18-85
 - [x] Free everything read_string() returns
 - [x] Validate inputs and return error messages when needed
 - [x] Don't let the user input diacritics
