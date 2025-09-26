@@ -350,7 +350,7 @@ int search_for_owner()
 
     char *query;
     
-    printf("\nEnter owner name (case-sensitive): ");
+    printf("\nEnter owner name to search: ");
     query = read_string();
 
     if (!is_valid(query, OWNER_NAME)) {
@@ -378,7 +378,7 @@ int search_for_owner()
         mid = left + (right - left) / 2;
 
         // Check for first occurance of a substring in a string
-        if (strstr(vehicles[mid].owner.name, query) != NULL) {
+        if (strcasestr(vehicles[mid].owner.name, query) != NULL) {
             free(query);
             free_vehicles(vehicles);
             if (!print_registry(mid, 1)) {

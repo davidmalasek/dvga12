@@ -68,7 +68,8 @@ void execute_option(int option_num)
 
 int main()
 {
-    int selected_option;
+    char *input;
+    int option;
 
     if (!registry_check()) {
         fancy_print("ERROR", RED);
@@ -82,10 +83,18 @@ int main()
     do {
         registry_check();
         print_options();
-        selected_option = read_int();
-        if (selected_option != 0)
-            execute_option(selected_option);
-    } while (selected_option != 0);
+        input = read_string();
+
+        if (input[0] >= 48 && input[0] <= 55) {
+            option = atoi(input);
+            if (option != 0)
+                execute_option(option);
+        } else {
+            fancy_print("ERROR", RED);
+            printf("Option \"%s\" is not valid.\n", input);
+            option = -1; // Because string results to 0
+        }
+    } while (option != 0);
 
     return 1;
 }
