@@ -1,3 +1,5 @@
+# Author: David Malášek
+
 import math
 
 class Circle:

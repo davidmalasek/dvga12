@@ -1,3 +1,5 @@
+# Author: David Malášek
+
 input_char = ''
 characters = []
 uppercase_count = 0

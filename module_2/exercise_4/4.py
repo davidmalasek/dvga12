@@ -1,3 +1,5 @@
+# Author: David Malášek
+
 import random
 
 def roll_dice():

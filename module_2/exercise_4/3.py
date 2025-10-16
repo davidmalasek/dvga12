@@ -1,3 +1,5 @@
+# Author: David Malášek
+
 array = []
 
 for i in range(5):
