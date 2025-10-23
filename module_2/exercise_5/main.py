@@ -1,29 +1,117 @@
 # Author: David Malášek
 
-"""
 import pygame
-import sys
+from config import *
+from sprites.bat import Bat
+from sprites.ball import Ball
+from sprites.brick import Brick
 
-# Inicializace pygame
 pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption(CAPTION)
 
-# Nastaveni okna
-WIDTH, HEIGHT = 800, 600
-window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("My First Pygame Window")
+clock = pygame.time.Clock()
+font = pygame.font.Font(None, 36)
 
-# Barvy (R, G, B)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+bat = Bat(
+    x=SCREEN_WIDTH // 2 - 90,
+    y=SCREEN_HEIGHT - 40,
+    width=180,
+    height=20,
+    color=COLOR_BAT,
+    speed=BAT_SPEED,
+)
+ball = Ball(
+    x=SCREEN_WIDTH // 2,
+    y=SCREEN_HEIGHT // 2,
+    radius=10,
+    color=COLOR_BALL,
+    speed_x=BALL_SPEED_X,
+    speed_y=BALL_SPEED_Y,
+)
 
-# Hlavni herni smycka
-while True:
+lives = LIVES
+score = 0
+
+bricks = []
+total_bricks_width = BRICK_COLUMNS * (BRICK_WIDTH - 2)
+start_x = (SCREEN_WIDTH - total_bricks_width) // 2
+
+for row in range(BRICK_ROWS):
+    for col in range(BRICK_COLUMNS):
+        x = start_x + col * (BRICK_WIDTH - 2)
+        y = row * BRICK_HEIGHT + BRICK_Y_OFFSET
+
+        if row % 2 == 0:
+            hits = 1
+            points = 10
+            color = (0, 180, 255)
+        else:
+            hits = 2
+            points = 25
+            color = (255, 100, 100)
+
+        brick = Brick(x, y, BRICK_WIDTH - 2, BRICK_HEIGHT - 2, color, hits, points)
+        bricks.append(brick)
+
+running = True
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
 
-    window.fill(BLACK)
-    pygame.draw.circle(window, WHITE, (WIDTH // 2, HEIGHT // 2), 50)
+    bat.update(screen)
+    ball.update(screen)
+
+    if ball.rect.colliderect(bat.rect):
+        ball.speed_y *= -1
+        ball.y = bat.y - ball.height
+        ball.update_rect()
+
+    for brick in bricks[:]:
+        if ball.rect.colliderect(brick.rect):
+            ball.speed_y *= -1
+            destroyed = brick.hit()
+            if destroyed:
+                bricks.remove(brick)
+                score += brick.points
+
+    if ball.y > SCREEN_HEIGHT:
+        lives -= 1
+        if lives > 0:
+            ball.x = SCREEN_WIDTH // 2
+            ball.y = SCREEN_HEIGHT // 2
+            ball.speed_x = BALL_SPEED_X
+            ball.speed_y = -BALL_SPEED_Y
+            ball.update_rect()
+            pygame.time.wait(1000)
+        else:
+            running = False
+
+    screen.fill(COLOR_BACKGROUND)
+    bat.draw(screen)
+    ball.draw(screen)
+    for brick in bricks:
+        brick.draw(screen)
+
+    text_color = COLOR_TEXT
+    screen.blit(font.render(f"Lives: {lives}", True, text_color), (20, 20))
+    screen.blit(font.render(f"Score: {score}", True, text_color), (20, 60))
+    screen.blit(font.render(f"Bricks left: {len(bricks)}", True, text_color), (20, 100))
+
     pygame.display.flip()
-"""
+    clock.tick(FPS)
+
+screen.fill(COLOR_BACKGROUND)
+if lives <= 0:
+    message = "GAME OVER!"
+elif len(bricks) == 0:
+    message = "YOU WIN!"
+else:
+    message = "Thanks for playing!"
+end_text = font.render(message, True, COLOR_TEXT)
+text_rect = end_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+screen.blit(end_text, text_rect)
+pygame.display.flip()
+pygame.time.wait(2000)
+pygame.quit()

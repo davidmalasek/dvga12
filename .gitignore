@@ -4,3 +4,4 @@ a.out
 build/
 .vscode
 img/
+__pycache__
