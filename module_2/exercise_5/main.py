@@ -1,6 +1,7 @@
 # Author: David Malášek
 
 import pygame
+import random
 from config import *
 from sprites.bat import Bat
 from sprites.ball import Ball
@@ -40,16 +41,16 @@ start_x = (SCREEN_WIDTH - total_bricks_width) // 2
 for row in range(BRICK_ROWS):
     for col in range(BRICK_COLUMNS):
         x = start_x + col * (BRICK_WIDTH - 2)
-        y = row * BRICK_HEIGHT + BRICK_Y_OFFSET
+        y = row * BRICK_HEIGHT + BRICK_Y_OFFSET + 60
 
-        if row % 2 == 0:
-            hits = 1
-            points = 10
-            color = (0, 180, 255)
+        if random.choice([True, False]):
+            hits = BRICK_DEFAULT
+            points = BRICK_DEFAULT_POINTS
+            color = BRICK_DEFAULT_COLOR
         else:
-            hits = 2
-            points = 25
-            color = (255, 100, 100)
+            hits = BRICK_MULTI_HIT
+            points = BRICK_MULTI_HIT_POINTS
+            color = BRICK_MULTI_HIT_COLOR
 
         brick = Brick(x, y, BRICK_WIDTH - 2, BRICK_HEIGHT - 2, color, hits, points)
         bricks.append(brick)
@@ -68,13 +69,20 @@ while running:
         ball.y = bat.y - ball.height
         ball.update_rect()
 
-    for brick in bricks[:]:
+    i = 0
+    while i < len(bricks):
+        brick = bricks[i]
         if ball.rect.colliderect(brick.rect):
             ball.speed_y *= -1
             destroyed = brick.hit()
             if destroyed:
-                bricks.remove(brick)
                 score += brick.points
+                del bricks[i]
+                continue
+        i += 1
+
+    if len(bricks) == 0:
+        running = False
 
     if ball.y > SCREEN_HEIGHT:
         lives -= 1
@@ -97,18 +105,18 @@ while running:
     text_color = COLOR_TEXT
     screen.blit(font.render(f"Lives: {lives}", True, text_color), (20, 20))
     screen.blit(font.render(f"Score: {score}", True, text_color), (20, 60))
-    screen.blit(font.render(f"Bricks left: {len(bricks)}", True, text_color), (20, 100))
 
     pygame.display.flip()
     clock.tick(FPS)
 
 screen.fill(COLOR_BACKGROUND)
 if lives <= 0:
-    message = "GAME OVER!"
+    message = "YOU LOST!"
 elif len(bricks) == 0:
     message = "YOU WIN!"
 else:
     message = "Thanks for playing!"
+
 end_text = font.render(message, True, COLOR_TEXT)
 text_rect = end_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 screen.blit(end_text, text_rect)
