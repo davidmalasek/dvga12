@@ -1,0 +1,124 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{appendix}
+\usepackage{graphicx}
+
+\usepackage{times}
+
+\lstset{breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  basicstyle=\ttfamily\small
+}
+
+% --- Change these three lines as needed ---
+\title{Exercise 5 Report}
+\author{David Malášek}
+\date{\today}
+
+% --- Add custom fields for birth date and statement ---
+\newcommand{\birthdate}{13 May 2004}
+\newcommand{\affirmation}{I hereby affirm that this report represents my own independent work and that I have neither given nor received unauthorized assistance in it's completion.}
+
+\makeatletter
+\renewcommand{\maketitle}{%
+  \bgroup\setlength{\parindent}{0pt}
+  \begin{flushleft}
+
+  \vspace*{-1cm}
+  \noindent\includegraphics[width=3cm]{kaulogo.jpg}
+  \vspace{2cm}
+
+  \hrule\vspace{0.5cm}
+  \textbf{\Huge\@title}
+  \vspace{0.5cm}\hrule
+  
+  \vspace{0.5cm}
+  \@author \\
+  Born: \birthdate
+  
+  \vspace{0.5cm}
+  \@date
+  
+  \vspace{0.5cm}
+  DVGA12 Programming and Data Structures
+  
+  Computer Science
+  
+  Faculty of Health, Science and Technology
+  
+  \vspace{0.5cm}\hrule
+
+  \vspace{1.5cm}
+  \textit{\affirmation}
+
+  \end{flushleft}
+  \egroup
+}
+\makeatother
+
+
+\begin{document}
+
+\maketitle  % Print title, author, date
+
+\newpage
+
+\tableofcontents  % Print table of contents
+
+\newpage
+
+\section{Introduction}
+
+Exercise 5 is a project focused on implementing a Breakout game clone in Python. According to the project assignment, Breakout game consists of a game board that has a number of bricks in the upper part, a user-controlled bat at the bottom and a bouncing ball that moves around. The objective is to bounce the ball against the bricks to destroy them and stopping the ball from falling below the bottom of the game board with the bat.
+
+The goal of the project is to practice object oriented programming and working with the \texttt{pygame} library.
+
+\section{Overview}
+
+This section presents descriptions of individual classes used in the implementation supported by a class diagram.
+
+\subsection{Sprite}
+This class serves as the superclass for all of the game objects. It defines the basic attributes: \texttt{x}, \texttt{y}, \texttt{width}, \texttt{height}, \texttt{color} and \texttt{rect}, which is an instance of \texttt{pygame.Rect} representing the object's position and dimensions. The class also provides the constructor \texttt{\_\_init\_\_(x, y, width, height, color)} for initializing mentioned properties. It's methods include 
+\texttt{draw(surface)}, which renders the sprite on the specified surface and \texttt{update\_rect()}, which synchronizes the \texttt{rect} object with the current coordinates of the sprite.
+
+\subsection{Bat}
+The \texttt{Bat} class represents a paddle, the only object that is movable by the player and it inherits from the superclass \texttt{Sprite}. In addition to the inherited attributes, it introduces a specific attribute \texttt{speed}, defining the movement speed of the paddle. The constructor \texttt{\_\_init\_\_(x, y, width, height, color, speed)} initializes both the inherited and new attributes. The method
+
+\texttt{update(screen)} processes keyboard input to control horizontal movement and ensures that the paddle remains within the screen boundaries.
+
+\subsection{Ball}
+This class represents a ball. Besides the inherited attributes, it defines following additional attributes: \texttt{radius}, \texttt{speed\_x}, \texttt{speed\_y} and an updated \texttt{rect} suitable for circular collision detection. The constructor \texttt{\_\_init\_\_(x, y, radius, color, speed\_x, speed\_y)} initializes all of the parameters. The method \texttt{update(screen)} handles the movement of the ball and the bouncing logic upon collision with the screen edges, while \texttt{draw(surface)} renders the ball.
+
+\subsection{Brick}
+The \texttt{Brick} class represents the destructible blocks within the game. It introduces two new attributes, \texttt{hits} and \texttt{points}, to store the number of collisions required to destroy the brick and the score points awarded upon destruction. The constructor \texttt{\_\_init\_\_(x, y, width, height, color, hits=1, points=10)} initializes these parameters. The class includes the method \texttt{hit()}, which decrements the number of remaining hits, darkens the color to indicate damage and returns a boolean value indicating whether the brick has been destroyed. The method \texttt{draw(surface)} renders the brick.
+
+\subsection{Class diagram}
+Here is a class diagram in UML notation based on the description above.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{uml_diagram.png}
+  \caption{UML diagram}
+  \label{fig:plot}
+\end{figure}
+
+\section{Interesting details}
+
+\subsection{Collision Detection}
+This project implements collision detection using the \texttt{pygame.Rect} class and it's method \texttt{colliderect()}, which determines whether two rectangular areas overlap. This technique allows the program to detect interactions between the ball, bat and bricks. Collision detection is a necessary part of the bouncing, scoring and object destruction logic.
+
+\section{Spent time}
+
+The development of this project required approximately 3 days of work, excluding the time spent on writing the report. While I already had prior experience with the Python programming language, the \texttt{pygame} library was new to me. Given this fact, I had to dedicate a portion of the development time to exploring it's documentation, tutorials and examples to understand how the library handles rendering, event management and timing. Eventually, I had to redo some parts of the project, because I discovered a more efficient approach.
+
+\section{Lessons learned}
+
+Interesting part of the project was designing and implementing the logic that handles the ball's movement. I had to analyze how the horizontal and vertical speed values (\texttt{speed\_x}, \texttt{speed\_y}) interact to produce smooth diagonal trajectories and realistic bouncing behavior after collisions. 
+
+Additionally, I learned the importance of controlling the game's frame rate to ensure consistent performance across different systems. By setting the frame rate to 60 frames per second, the gameplay became noticeably smoother and more visually stable.
+
+\end{document}
