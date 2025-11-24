@@ -14,7 +14,7 @@ main: $(OBJ)
 	$(CC) $(CFLAGS) -o main $(OBJ) $(LFLAGS)
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $< $(LFLAGS)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 clean:
 	rm -rf *.o main
