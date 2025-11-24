@@ -75,10 +75,10 @@
 
 \section{Introduction}
 
-This report represents the implementation of five common algorithms in C programming language: bubble sort, insertion sort, quick sort,
+This report represents the implementation of five common algorithms in the C programming language: bubble sort, insertion sort, quick sort,
 linear search and binary search. The purpose of this project is to analyze how these algorithms behave in the best, average and worst cases, in other words, to compare their time complexity.
 
-The analysis will be done based on the result from a testing program provided with the assignment.
+The analysis is based on the results from a testing program provided with the assignment.
 
 \section{Description of the Algorithms}
 
@@ -86,9 +86,9 @@ This section briefly explains the function of the five algorithms and their runn
 
 \subsection{Bubble Sort}
 
-Bubble sort goes through the input array many times. In each pass, it compares neighbor elements performs a swap of these elements if they are in
+Bubble sort goes through the input array many times. In each pass, it compares neighbor elements and performs a swap of these elements if they are in
 the wrong order.
-In this implementation, there is also a flag that reflects if a swap occurred in the current pass. If there was no swap, the array is already sorted and the algorithm stops early, which makes the algorithm little bit more efficient.
+In this implementation, there is also a flag that reflects if a swap occurred in the current pass. If there was no swap, the array is already sorted and the algorithm stops early, which makes the algorithm a little bit more efficient.
 
 \begin{itemize}
     \item \textbf{Best case: $O(n)$}\\
@@ -130,7 +130,7 @@ After this, it calls itself recursively on the left part and on the right part.
     \item \textbf{Best case: $O(n \log n)$}\\
     This case happens when the pivot splits the array into two similar halves each time.
     \item \textbf{Average case: $O(n \log n)$}\\
-    For random data and a middle pivot, the partitions are usually not too unbalanced, so in practice we also get this behavior.
+    For random data and a middle pivot, the partitions are usually not too unbalanced, so in practice the running time also follows this behavior.
     \item \textbf{Worst case: $O(n^2)$}\\
     In theory, if the pivot is always very bad (e.g. always the smallest value), the partitions are extremely unbalanced and the algorithm can get quadratic time. With the middle pivot, this is unlikely but still possible on specially prepared inputs.
 \end{itemize}
@@ -297,8 +297,8 @@ The running times are not only very small, but they also change very little as $
 \section{Discussion}
 
 For the sorting algorithms, the tables clearly show the difference between
-quadratic and $n \log n$ behaviour. Bubble sort and insertion sort both have very small times in the best case (already sorted input), and the growth of their best case times looks almost linear. However, as soon as we look at the average and worst cases, the running times increase much faster. For example, for $n = 16384$ bubble sort needs about $0.47$ seconds on average, while
-insertion sort needs about $0.08$ seconds. This matches the $O(n^2)$ behaviour.
+quadratic and $n \log n$ behavior. Bubble sort and insertion sort both have very small times in the best case (already sorted input), and the growth of their best case times looks almost linear. However, as soon as we look at the average and worst cases, the running times increase much faster. For example, for $n = 16384$ bubble sort needs about $0.47$ seconds on average, while
+insertion sort needs about $0.08$ seconds. This matches the $O(n^2)$ behavior.
 
 Quick sort, on the other hand, behaves very differently. Its running times in the best, average and worst cases are all in the same small range, and the growth with $n$ is much slower. For $n = 16384$ the average time is only about $0.0029$ seconds, which is far below the times of bubble sort and insertion sort for the same size. This corresponds with the expected $O(n \log n)$ complexity.
 
