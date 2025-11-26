@@ -49,20 +49,20 @@ void bubble_sort(int *a, int n)
 	int i = 0;
 	int e = 0;
 	
-	int swap_itemsped = 0;
+	int swapped = 0;
 
 	while (i < n - 1) {
 		e = 0;
-		swap_itemsped = 0;
+		swapped = 0;
 		while (e < n - 1 - i) {
 			if (a[e] > a[e + 1]) {
 				swap_items(&a[e], &a[e + 1]);
-				swap_itemsped = 1;
+				swapped = 1;
 			}
 			e++;
 		}
 		i++;
-		if (swap_itemsped == 0)
+		if (swapped == 0)
 			break;
 	}
 }
