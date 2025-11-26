@@ -80,11 +80,11 @@ linear search and binary search. The purpose of this project is to analyze how t
 
 The analysis is based on the results from a testing program provided with the assignment.
 
-\section{Description of the Algorithms}
+\section{Description of the algorithms}
 
 This section briefly explains the function of the five algorithms and their running time.
 
-\subsection{Bubble Sort}
+\subsection{Bubble sort}
 
 Bubble sort goes through the input array many times. In each pass, it compares neighbor elements and performs a swap of these elements if they are in
 the wrong order.
@@ -101,9 +101,9 @@ In this implementation, there is also a flag that reflects if a swap occurred in
     Example situation could be when the array is sorted in the opposite direction. Then many swaps are needed and bubble sort is slow.
 \end{itemize}
 
-Bubble sort is rather simple to understand and implement, but it is not a good choice for large arrays because of the quadratic time.
+Bubble sort is rather simple to implement, but it is not a good choice for large arrays because of the quadratic time.
 
-\subsection{Insertion Sort}
+\subsection{Insertion sort}
 
 Insertion sort builds the sorted array step by step. It starts from the second element and considers the items on the left as already
 sorted.
@@ -120,7 +120,7 @@ Then it takes the current element and moves it to the left until it finds the co
 
 Compared to bubble sort, insertion sort is still quadratic, however, it is faster especially when the array is already almost sorted.
 
-\subsection{Quick Sort}
+\subsection{Quick sort}
 
 Quick sort picks the middle element of the current range as a pivot. Then, it rearranges the elements so that everything smaller than the pivot goes
 to the left and everything larger goes to the right.
@@ -132,12 +132,12 @@ After this, it calls itself recursively on the left part and on the right part.
     \item \textbf{Average case: $O(n \log n)$}\\
     For random data and a middle pivot, the partitions are usually not too unbalanced, so in practice the running time also follows this behavior.
     \item \textbf{Worst case: $O(n^2)$}\\
-    In theory, if the pivot is always very bad (e.g. always the smallest value), the partitions are extremely unbalanced and the algorithm can get quadratic time. With the middle pivot, this is unlikely but still possible on specially prepared inputs.
+    In theory, if the pivot is not ideal (e.g. always the smallest value), the partitions are extremely unbalanced and the algorithm can get quadratic time. With the middle pivot, this is unlikely but still possible on specially prepared inputs.
 \end{itemize}
 
 Quick sort is more complicated than bubble or insertion sort, however, it is much faster for large arrays.
 
-\subsection{Linear Search}
+\subsection{Linear search}
 
 Linear search goes through the array from the beginning to the end and compares each element with the searched value. In case it finds it, it returns \texttt{true}, if it reaches the end, it returns \texttt{false}.
 
@@ -152,7 +152,7 @@ Linear search goes through the array from the beginning to the end and compares 
 
 Linear search does not need a sorted array, but it is not fast on large arrays.
 
-\subsection{Binary Search}
+\subsection{Binary search}
 
 Binary search requires a sorted array. Instead of checking all values one by one, it checks the middle element of the current range.
 If the middle is smaller than the target, it continues within the right half, otherwise it continues within the left half. It repeats this process until it finds the value or until the range becomes empty.
@@ -166,13 +166,13 @@ If the middle is smaller than the target, it continues within the right half, ot
 
 Binary search is much faster than linear search on large sorted arrays, however, it requires a sorted array.
 
-\section{Experimental Results}
+\section{Experimental results}
 
 A program for measuring running times was provided along with the assignment. This section presents the results from this program.
 
-\subsection{Sorting Algorithms}
+\subsection{Sorting algorithms}
 
-\subsubsection*{Bubble Sort}
+\subsubsection*{Bubble sort}
 
 Table~\ref{tab:bubble-sort} shows the running times of bubble sort.
 It is clear that the best case (already sorted input) is much faster than
@@ -196,7 +196,7 @@ the average and worst cases, which grow very quickly with the input size.
     \end{tabular}
 \end{table}
 
-\subsubsection*{Insertion Sort}
+\subsubsection*{Insertion sort}
 
 Table~\ref{tab:insertion-sort} displays the running times for insertion sort. Just like bubble sort, it is rapid in the best case (already sorted)
 and much slower in the average and worst cases. However, for the same $n$ it is generally faster compared to bubble sort.
@@ -219,7 +219,7 @@ and much slower in the average and worst cases. However, for the same $n$ it is 
     \end{tabular}
 \end{table}
 
-\subsubsection*{Quick Sort}
+\subsubsection*{Quick sort}
 
 Table~\ref{tab:quicksort} reflects the running times for quick sort.
 Here the best, average and worst cases are all in a similar range and the
@@ -246,9 +246,9 @@ growth with $n$ is much slower than with bubble sort or insertion sort.
 Looking at all three tables together, we can see that for large $n$
 quick sort is much faster than bubble or insertion sort algorithms.
 
-\subsection{Searching Algorithms}
+\subsection{Searching algorithms}
 
-\subsubsection*{Linear Search}
+\subsubsection*{Linear search}
 
 Table~\ref{tab:linear-search} shows the running times for linear search.
 Even in the worst case, the absolute values are very small, but the time still grows with $n$, which corresponds with the $O(n)$ behavior.
@@ -271,7 +271,7 @@ Even in the worst case, the absolute values are very small, but the time still g
     \end{tabular}
 \end{table}
 
-\subsubsection*{Binary Search}
+\subsubsection*{Binary search}
 
 Table~\ref{tab:binary-search} displays the times for binary search.
 The running times are not only very small, but they also change very little as $n$ increases, which matches the expected behavior of an $O(\log n)$ algorithm.
@@ -297,7 +297,7 @@ The running times are not only very small, but they also change very little as $
 \section{Discussion}
 
 For the sorting algorithms, the tables clearly show the difference between
-quadratic and $n \log n$ behavior. Bubble sort and insertion sort both have very small times in the best case (already sorted input), and the growth of their best case times looks almost linear. However, as soon as we look at the average and worst cases, the running times increase much faster. For example, for $n = 16384$ bubble sort needs about $0.47$ seconds on average, while
+quadratic and $n \log n$ time complexity. Bubble sort and insertion sort both have very small times in the best case (already sorted input), and the growth of their best case times looks almost linear. However, as soon as we look at the average and worst cases, the running times increase much faster. For example, for $n = 16384$ bubble sort needs about $0.47$ seconds on average, while
 insertion sort needs about $0.08$ seconds. This matches the $O(n^2)$ behavior.
 
 Quick sort, on the other hand, behaves very differently. Its running times in the best, average and worst cases are all in the same small range, and the growth with $n$ is much slower. For $n = 16384$ the average time is only about $0.0029$ seconds, which is far below the times of bubble sort and insertion sort for the same size. This corresponds with the expected $O(n \log n)$ complexity.
@@ -306,7 +306,7 @@ Regarding the searching algorithms, linear search times grow with $n$ in all thr
 
 Binary search, on the other hand, stays extremely fast even for the largest input size. The times in Table~\ref{tab:binary-search} change very little as $n$ increases, which is what is expected from an $O(\log n)$ algorithm.
 
-\section{Summary and Conclusions}
+\section{Summary and conclusions}
 
 This report presents the implementation and running time analysis of five algorithms:
 
@@ -335,7 +335,7 @@ A conclusion for the testing of searching algorithms is presented below:
 
 Overall, the tests confirmed the theoretical complexity results in practice. Quadratic algorithms quickly become slow for large inputs, while $n \log n$ and $\log n$ algorithms remain efficient.
 
-\section{Lessons Learned}
+\section{Lessons learned}
 
 While working on this project I learned several useful things about algorithms. I already knew the theory of Big-O complexities, but seeing the actual running times on real data helped me better understand what $O(n^2)$ or $O(n \log n)$ mean in practice. I also experienced how strongly the behavior of the algorithms depends on the input data: whether the array is sorted, random or reversed, it makes a clear difference. Simple algorithms like bubble sort or linear search are not difficult to implement and are fine for small arrays, but for larger inputs more advanced algorithms such as quick sort and binary search are much more efficient.
 
