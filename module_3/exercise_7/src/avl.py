@@ -60,9 +60,9 @@ class AVL(bst.BST):
             self.cons(child.lc(), child.rc())
             return self.balance()
 
-        max_val = self.lc()._find_max()
-        self.set_value(max_val)
-        self.cons(self.lc().delete(max_val), self.rc())
+        min_val = self.rc().find_min()
+        self.set_value(min_val)
+        self.cons(self.lc(), self.rc().delete(min_val))
         return self.balance()
 
     def balance(self):

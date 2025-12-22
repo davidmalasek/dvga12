@@ -103,6 +103,16 @@ class BST(bt.BT):
                 q.append(node.lc())
                 q.append(node.rc())
 
+        if last_value_index >= 0:
+            level = 0
+            level_start = 0
+            while True:
+                level_end = level_start + (2**level) - 1
+                if last_value_index <= level_end:
+                    return result[: level_end + 1]
+                level_start = level_end + 1
+                level += 1
+
         return result[: last_value_index + 1]
 
     def add(self, v):
@@ -123,6 +133,12 @@ class BST(bt.BT):
         node = self
         while not node.rc().is_empty():
             node = node.rc()
+        return node.value()
+
+    def find_min(self):
+        node = self
+        while not node.lc().is_empty():
+            node = node.lc()
         return node.value()
 
     def delete(self, v):
@@ -160,9 +176,9 @@ class BST(bt.BT):
             self.cons(child.lc(), child.rc())
             return self
 
-        max_val = self.lc().find_max()
-        self.set_value(max_val)
-        self.cons(self.lc().delete(max_val), self.rc())
+        min_val = self.rc().find_min()
+        self.set_value(min_val)
+        self.cons(self.lc(), self.rc().delete(min_val))
         return self
 
 
