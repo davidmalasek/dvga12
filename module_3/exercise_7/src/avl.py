@@ -48,6 +48,7 @@ class AVL(bst.BST):
         if left_empty and right_empty:
             self.__init__()
             return self
+
         if left_empty and not right_empty:
             child = self.rc()
             self.set_value(child.value())
@@ -60,9 +61,9 @@ class AVL(bst.BST):
             self.cons(child.lc(), child.rc())
             return self.balance()
 
-        min_val = self.rc().find_min()
-        self.set_value(min_val)
-        self.cons(self.lc(), self.rc().delete(min_val))
+        max_val = self.lc().find_max()
+        self.set_value(max_val)
+        self.cons(self.lc().delete(max_val), self.rc())
         return self.balance()
 
     def balance(self):

@@ -3,7 +3,6 @@
 import bt
 import sys
 import logging
-from collections import deque
 
 log = logging.getLogger(__name__)
 
@@ -89,31 +88,31 @@ class BST(bt.BT):
             return []
 
         result = []
-        q = deque()
-        q.append(self)
-        last_value_index = -1
+        queue = [self]
+        last_real_node_position = -1
 
-        while q:
-            node = q.popleft()
+        while queue:
+            node =queue.pop(0)
+            
             if node is None or node.is_empty():
                 result.append(None)
             else:
                 result.append(node.value())
-                last_value_index = len(result) - 1
-                q.append(node.lc())
-                q.append(node.rc())
+                last_real_node_position = len(result) - 1
+                queue.append(node.lc())
+                queue.append(node.rc())
 
-        if last_value_index >= 0:
-            level = 0
-            level_start = 0
-            while True:
-                level_end = level_start + (2**level) - 1
-                if last_value_index <= level_end:
-                    return result[: level_end + 1]
-                level_start = level_end + 1
-                level += 1
+        if last_real_node_position== -1:
+            return []
 
-        return result[: last_value_index + 1]
+        current_level = 0
+        nodes_before_current_level = 0
+        while nodes_before_current_level + (2 ** current_level) <= last_real_node_position:
+            nodes_before_current_level += 2 ** current_level
+            current_level += 1
+
+        end_position = nodes_before_current_level + (2 ** current_level)
+        return result[:end_position]
 
     def add(self, v):
         """
