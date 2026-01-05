@@ -307,7 +307,7 @@ class AdjacencyList:
         """
         head, node_names = self.head(), []
         while not head.is_empty():
-            node_names.append(head.name())
+            node_names += [ head.name() ]
             head = head.tail()
         return node_names
 
