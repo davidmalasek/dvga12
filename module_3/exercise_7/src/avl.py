@@ -31,39 +31,7 @@ class AVL(bst.BST):
         return self.balance()
 
     def delete(self, v):
-        if self.is_empty():
-            return self
-
-        if v < self.value():
-            self.cons(self.lc().delete(v), self.rc())
-            return self.balance()
-
-        if v > self.value():
-            self.cons(self.lc(), self.rc().delete(v))
-            return self.balance()
-
-        left_empty = self.lc().is_empty()
-        right_empty = self.rc().is_empty()
-
-        if left_empty and right_empty:
-            self.__init__()
-            return self
-
-        if left_empty and not right_empty:
-            child = self.rc()
-            self.set_value(child.value())
-            self.cons(child.lc(), child.rc())
-            return self.balance()
-
-        if right_empty and not left_empty:
-            child = self.lc()
-            self.set_value(child.value())
-            self.cons(child.lc(), child.rc())
-            return self.balance()
-
-        max_val = self.lc().find_max()
-        self.set_value(max_val)
-        self.cons(self.lc().delete(max_val), self.rc())
+        bst.BST.delete(self, v)
         return self.balance()
 
     def balance(self):
@@ -74,30 +42,29 @@ class AVL(bst.BST):
         if self.is_empty():
             return self
 
-        lh = self.lc().height()
-        rh = self.rc().height()
-        bf = lh - rh
+        left_height = self.lc().height()
+        right_height = self.rc().height()
+        balance_factor = left_height - right_height
 
-        if bf > 1:
-            child = self.lc()
-            clh = child.lc().height()
-            crh = child.rc().height()
-            child_bf = clh - crh
+        if balance_factor > 1:
+            left_child = self.lc()
+            left_left_height = left_child.lc().height()
+            left_right_height = left_child.rc().height()
+            left_child_balance_factor = left_left_height - left_right_height
 
-            if child_bf >= 0:
+            if left_child_balance_factor >= 0:
                 return self.srr()
-            else:
-                return self.drr()
+            return self.drr()
 
-        if bf < -1:
-            child = self.rc()
-            clh = child.lc().height()
-            crh = child.rc().height()
-            child_bf = clh - crh
-            if child_bf <= 0:
+        if balance_factor < -1:
+            right_child = self.rc()
+            right_left_height = right_child.lc().height()
+            right_right_height = right_child.rc().height()
+            right_child_balance_factor = right_left_height - right_right_height
+
+            if right_child_balance_factor <= 0:
                 return self.slr()
-            else:
-                return self.dlr()
+            return self.dlr()
 
         return self
 
@@ -108,19 +75,19 @@ class AVL(bst.BST):
         if self.is_empty() or self.rc().is_empty():
             return self
 
-        x_val = self.value()
-        A = self.lc()
-        Y = self.rc()
-        B = Y.lc()
-        C = Y.rc()
+        old_root_value = self.value()
+        left_subtree = self.lc()
 
-        y_val = Y.value()
+        right_child = self.rc()
+        new_root_value = right_child.value()
+        right_child_left_subtree = right_child.lc()
+        right_child_right_subtree = right_child.rc()
 
-        left_sub = AVL(x_val)
-        left_sub.cons(A, B)
+        new_left_subtree = AVL(old_root_value)
+        new_left_subtree.cons(left_subtree, right_child_left_subtree)
 
-        self.set_value(y_val)
-        self.cons(left_sub, C)
+        self.set_value(new_root_value)
+        self.cons(new_left_subtree, right_child_right_subtree)
         return self
 
     def srr(self):
@@ -130,18 +97,19 @@ class AVL(bst.BST):
         if self.is_empty() or self.lc().is_empty():
             return self
 
-        y_val = self.value()
-        Y = self.lc()
-        A = Y.lc()
-        B = Y.rc()
-        x_val = Y.value()
-        C = self.rc()
+        old_root_value = self.value()
+        right_subtree = self.rc()
 
-        right_sub = AVL(y_val)
-        right_sub.cons(B, C)
+        left_child = self.lc()
+        new_root_value = left_child.value()
+        left_child_left_subtree = left_child.lc()
+        left_child_right_subtree = left_child.rc()
 
-        self.set_value(x_val)
-        self.cons(A, right_sub)
+        new_right_subtree = AVL(old_root_value)
+        new_right_subtree.cons(left_child_right_subtree, right_subtree)
+
+        self.set_value(new_root_value)
+        self.cons(left_child_left_subtree, new_right_subtree)
         return self
 
     def dlr(self):

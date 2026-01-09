@@ -179,36 +179,63 @@ class TerminalUI:
 
     def show_2d(self):
         """
-        Shows a pretty 2D tree based on the output of bfs_order_star(). None
-        values are are replaced by stars ("*").
+        Shows a pretty 2D tree based on the output of bfs_order_star().
+        None values are replaced by stars ("*").
+
+        This version reserves enough spacing for multi-digit values by using
+        a fixed cell width (max width of all printed values).
         """
-        nodes = self._tree.bfs_order_star()
-        if not nodes:
+        tree_nodes = self._tree.bfs_order_star()
+        if not tree_nodes:
             print("")
             return
 
-        n = len(nodes)
-        h = int(math.floor(math.log2(n))) + 1
+        tree_list_length = len(tree_nodes)
+        tree_height_levels = int(math.floor(math.log2(tree_list_length))) + 1
 
-        index = 0
+        printed_values = []
+        for node_value in tree_nodes:
+            if node_value is None:
+                printed_values.append("*")
+            else:
+                printed_values.append(str(node_value))
 
-        for level in range(h):
-            level_count = 2**level
-            indent = 2 ** (h - level - 1) - 1
-            between = 2 ** (h - level) - 1
+        max_cell_width = 1
+        for value_string in printed_values:
+            if len(value_string) > max_cell_width:
+                max_cell_width = len(value_string)
 
-            line = " " * indent
-            for i in range(level_count):
-                if index < n:
-                    v = nodes[index]
-                    value = "*" if v is None else str(v)
+        cell_separator = " "
+        empty_cell = " " * max_cell_width
+        empty_cell_with_separator = empty_cell + cell_separator
+
+        node_index = 0
+
+        for level_index in range(tree_height_levels):
+            nodes_in_level = 2**level_index
+            indent_cells = (2 ** (tree_height_levels - level_index - 1)) - 1
+            between_cells = (2 ** (tree_height_levels - level_index)) - 1
+
+            indent_spacing = empty_cell_with_separator * indent_cells
+            between_spacing = empty_cell_with_separator * between_cells
+
+            line_parts = [indent_spacing]
+
+            for node_index_in_level in range(nodes_in_level):
+                if node_index < tree_list_length:
+                    value_string = printed_values[node_index]
                 else:
-                    value = "*"
-                line += value
-                index += 1
-                if i < level_count - 1:
-                    line += " " * between
-            print(line)
+                    value_string = "*"
+
+                centered_value = value_string.center(max_cell_width)
+                line_parts.append(centered_value)
+
+                node_index += 1
+
+                if node_index_in_level < nodes_in_level - 1:
+                    line_parts.append(between_spacing)
+
+            print("".join(line_parts))
 
 
 if __name__ == "__main__":

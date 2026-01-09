@@ -3,6 +3,7 @@
 import bt
 import sys
 import logging
+from collections import deque
 
 log = logging.getLogger(__name__)
 
@@ -87,32 +88,25 @@ class BST(bt.BT):
         if self.is_empty():
             return []
 
-        result = []
-        queue = [self]
-        last_real_node_position = -1
+        tree_height = self.height()
+        total_slots = (2**tree_height) - 1
 
-        while queue:
-            node =queue.pop(0)
-            
-            if node is None or node.is_empty():
-                result.append(None)
+        bfs_result = []
+        node_queue = deque([self])
+
+        for i in range(total_slots):
+            current_node = node_queue.popleft()
+
+            if current_node is None or current_node.is_empty():
+                bfs_result.append(None)
+                node_queue.append(None)
+                node_queue.append(None)
             else:
-                result.append(node.value())
-                last_real_node_position = len(result) - 1
-                queue.append(node.lc())
-                queue.append(node.rc())
+                bfs_result.append(current_node.value())
+                node_queue.append(current_node.lc())
+                node_queue.append(current_node.rc())
 
-        if last_real_node_position== -1:
-            return []
-
-        current_level = 0
-        nodes_before_current_level = 0
-        while nodes_before_current_level + (2 ** current_level) <= last_real_node_position:
-            nodes_before_current_level += 2 ** current_level
-            current_level += 1
-
-        end_position = nodes_before_current_level + (2 ** current_level)
-        return result[:end_position]
+        return bfs_result
 
     def add(self, v):
         """
@@ -175,9 +169,9 @@ class BST(bt.BT):
             self.cons(child.lc(), child.rc())
             return self
 
-        min_val = self.rc().find_min()
-        self.set_value(min_val)
-        self.cons(self.lc(), self.rc().delete(min_val))
+        predecessor_value = self.lc().find_max()
+        self.set_value(predecessor_value)
+        self.cons(self.lc().delete(predecessor_value), self.rc())
         return self
 
 
