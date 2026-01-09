@@ -21,6 +21,13 @@ The default is BST, and you can change it by setting the AVL mode:
 - Run in BST mode: `./bin/main`
 - Run in AVL mode: `./bin/main -m avl`
 
+To test against the given output files, you can run the following commands,
+then directly compare the contents of the files created to the respective
+file you've been given (bst.txt or avl.txt):
+
+- In BST mode: `./bin/main < bst_input.txt > bst_output.txt`
+- In AVL mode: `./bin/main -m avl < avl_input.txt > avl_output.txt`
+
 If you'd like to use python's logging module for debugging purposes, set the
 logging level accordingly:
 - Show all logging statements: `./bin/main -l debug`

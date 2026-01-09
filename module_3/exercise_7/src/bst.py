@@ -169,9 +169,14 @@ class BST(bt.BT):
             self.cons(child.lc(), child.rc())
             return self
 
-        predecessor_value = self.lc().find_max()
-        self.set_value(predecessor_value)
-        self.cons(self.lc().delete(predecessor_value), self.rc())
+        if self.lc().height() >= self.rc().height():
+            predecessor_value = self.lc().find_max()
+            self.set_value(predecessor_value)
+            self.cons(self.lc().delete(predecessor_value), self.rc())
+        else:
+            successor_value = self.rc().find_min()
+            self.set_value(successor_value)
+            self.cons(self.lc(), self.rc().delete(successor_value))
         return self
 
 
